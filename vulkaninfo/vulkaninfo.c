@@ -559,7 +559,7 @@ static const char *VkFormatString(VkFormat fmt) {
     }
 }
 #if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) || \
-    defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_WAYLAND_KHR)
+    defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_WAYLAND_KHR) || defined(VK_USE_PLATFORM_FUCHSIA)
 static const char *VkPresentModeString(VkPresentModeKHR mode) {
     switch (mode) {
 #define STR(r)                \
@@ -1334,8 +1334,9 @@ static void AppDestroyWin32Window(struct AppInstance *inst) { DestroyWindow(inst
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 //-----------------------------------------------------------
 
-#if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) || \
-    defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_WAYLAND_KHR) || defined(VK_USE_PLATFORM_ANDROID_KHR)
+#if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) ||        \
+    defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_WAYLAND_KHR) || defined(VK_USE_PLATFORM_ANDROID_KHR) || \
+    defined(VK_USE_PLATFORM_FUCHSIA)
 static void AppDestroySurface(struct AppInstance *inst, VkSurfaceKHR surface) {  // same for all platforms
     vkDestroySurfaceKHR(inst->instance, surface, NULL);
 }
@@ -1515,7 +1516,7 @@ static void AppDestroyWaylandWindow(struct AppInstance *inst) { wl_display_disco
 #endif  // VK_USE_PLATFORM_WAYLAND_KHR
 
 #if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) || \
-    defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_WAYLAND_KHR)
+    defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_WAYLAND_KHR) || defined(VK_USE_PLATFORM_FUCHSIA)
 static int AppDumpSurfaceFormats(struct AppInstance *inst, struct AppGpu *gpu, VkSurfaceKHR surface, FILE *out) {
     // Get the list of VkFormat's that are supported
     VkResult err;

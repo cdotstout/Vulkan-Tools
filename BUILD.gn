@@ -94,11 +94,13 @@ if (!is_android) {
   }
 
   executable("vulkaninfo") {
-    sources = [ "vulkaninfo/vulkaninfo.c" ]
+    sources = [
+      "vulkaninfo/vulkaninfo.c",
+    ]
 
     cflags_c = [ "-Wno-missing-field-initializers" ]
 
-    deps = [ 
+    deps = [
       "$vulkan_headers_dir:vulkan_headers",
       "//third_party/Vulkan-Loader:libvulkan",
     ]
