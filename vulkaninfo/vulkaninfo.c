@@ -1059,8 +1059,12 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
 
     vkGetPhysicalDeviceFeatures(gpu->obj, &gpu->features);
 
+    AppGetPhysicalDeviceLayerExtensions(gpu, NULL, &gpu->device_extension_count, &gpu->device_extensions);
+
     if (CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, gpu->inst->inst_extensions,
-                              gpu->inst->inst_extensions_count)) {
+                              gpu->inst->inst_extensions_count) &&
+        CheckPhysicalDeviceExtensionIncluded(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME, gpu->device_extensions,
+                                             gpu->device_extension_count)) {
         struct pNextChainBuildingBlockInfo mem_prop_chain_info[] = {
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
              .mem_size = sizeof(VkPhysicalDeviceMemoryBudgetPropertiesEXT)}};
@@ -1117,8 +1121,6 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
 
         inst->vkGetPhysicalDeviceFeatures2KHR(gpu->obj, &gpu->features2);
     }
-
-    AppGetPhysicalDeviceLayerExtensions(gpu, NULL, &gpu->device_extension_count, &gpu->device_extensions);
 
     const float queue_priority = 1.0f;
     const VkDeviceQueueCreateInfo q_ci = {.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
