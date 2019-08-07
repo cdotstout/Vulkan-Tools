@@ -15,10 +15,6 @@
 
 import("//build_overrides/vulkan_tools.gni")
 
-# Vulkan-tools isn't ported to Fuchsia yet.
-# TODO(spang): Port mock ICD to Fuchsia.
-assert(!is_fuchsia)
-
 vulkan_undefine_configs = []
 if (is_win) {
   vulkan_undefine_configs += [
@@ -64,8 +60,10 @@ if (!is_android) {
     if (is_win) {
       sources += [ "icd/VkICD_mock_icd.def" ]
     }
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [ "//build/config/compiler:no_chromium_code" ]
+    if (!is_fuchsia) {
+      configs -= [ "//build/config/compiler:chromium_code" ]
+      configs += [ "//build/config/compiler:no_chromium_code" ]
+    }
   }
 
   action("vulkan_gen_icd_json_file") {
@@ -82,6 +80,10 @@ if (!is_android) {
       sources += [ "icd/linux/VkICD_mock_icd.json" ]
       args += [ "$raw_vulkan_icd_dir/linux" ]
     }
+    if (is_fuchsia) {
+      sources += [ "icd/linux/VkICD_mock_icd.json" ]
+      args += [ "$raw_vulkan_icd_dir/fuchsia" ]
+    }
 
     # The layer JSON files are part of the necessary data deps.
     outputs = [
@@ -89,5 +91,16 @@ if (!is_android) {
     ]
     data = outputs
     args += [ raw_vulkan_data_dir ] + rebase_path(sources, root_build_dir)
+  }
+
+  executable("vulkaninfo") {
+    sources = [ "vulkaninfo/vulkaninfo.c" ]
+
+    cflags_c = [ "-Wno-missing-field-initializers" ]
+
+    deps = [ 
+      "$vulkan_headers_dir:vulkan_headers",
+      "//third_party/Vulkan-Loader:libvulkan",
+    ]
   }
 }
